@@ -6,7 +6,7 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 @Entity
- data class Preguntas(var mensaje:String,) {
+ data class Mensajes(var mensaje:String,) {
   @Id
   @GeneratedValue
   var id=0
@@ -14,5 +14,13 @@ import javax.persistence.Id
  override fun toString():String{
   val gson= Gson()
   return gson.toJson(this)
+ }
+}
+class MensajesFiltrados() {
+ val listaMensajesFiltrados = mutableListOf<Mensajes>()
+ override fun toString(): String {
+  val gson = Gson()
+  return gson.toJson(this)
+
  }
 }

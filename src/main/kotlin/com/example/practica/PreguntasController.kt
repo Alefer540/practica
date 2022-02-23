@@ -10,44 +10,46 @@ import java.util.*
 class PreguntasController(private val preguntasRepository: PreguntasRepository) {
     //curl --request POST  --header "Content-type:application/json; charset=utf-8" --data "pepe" localhost:8083/publicarTexto
     @PostMapping("publicarTexto")
-    fun insertarmensaje(@RequestBody texto: String): Preguntas {
-        val preg = Preguntas(texto)
+    fun insertarmensaje(@RequestBody texto: String): Mensajes {
+        val preg = Mensajes(texto)
         preguntasRepository.save(preg)
         println(preg)
         return preg
     }
 
     @GetMapping("show")
-    fun mostrarUsuarios(): MutableList<Preguntas> {
+    fun mostrarUsuarios(): MutableList<Mensajes> {
         return preguntasRepository.findAll()
     }
 
     //curl --request GET --header "Content-type:application/json; charset=utf-8" --data "Mensa" localhost:8083/descargarFiltrado
     @GetMapping("descargarFiltrado")
-    fun filtrado(@RequestBody texto: String): MutableList<Preguntas> {
-        var listaMensajeFiltrado = mutableListOf<Preguntas>()
+    fun filtrado(@RequestBody texto: String): MensajesFiltrados {
+        var filtrados = MensajesFiltrados()
         preguntasRepository.findAll().forEach {
             if (it.mensaje.contains(texto)) {
-                listaMensajeFiltrado.add(it)
+                filtrados.listaMensajesFiltrados.add(it)
 
             }
 
         }
-        return listaMensajeFiltrado
+        return filtrados
     }
 
     @GetMapping("Borrar")
-    fun delete(): Boolean {
-        var borrado = false
+    fun delete() {
+        val listaMensajesBorrados = mutableListOf<Mensajes>()
         preguntasRepository.findAll().forEach {
-            if (it.mensaje == " ") {
-                borrado = true
-                preguntasRepository.delete(it)
-            } else {
-                borrado = false
+            if (it.mensaje.equals(" ")) {
+                listaMensajesBorrados.add(it)
             }
         }
-        return borrado
+        listaMensajesBorrados.forEach {
+            preguntasRepository.delete(it)
+        }
+        preguntasRepository.findAll().forEach {
+            println(it)
+        }
     }
 }
 

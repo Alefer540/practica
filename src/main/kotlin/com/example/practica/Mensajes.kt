@@ -24,3 +24,11 @@ class MensajesFiltrados() {
 
  }
 }
+ class Primeros10() {
+  var primeros10Mensajes = ArrayList<Mensajes>()
+  override fun toString(): String {
+   val gson = Gson()
+   return gson.toJson(this)
+
+  }
+}

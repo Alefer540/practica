@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class Database {
     @Bean
-    fun initDatabase(preguntasRepository: PreguntasRepository): CommandLineRunner {
+    fun initDatabase(preguntasRepository: PreguntasRepository,respuestasRepository: RespuestasRepository): CommandLineRunner {
         return CommandLineRunner {
         }
     }

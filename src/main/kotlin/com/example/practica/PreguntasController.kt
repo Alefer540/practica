@@ -8,7 +8,7 @@ import kotlin.system.exitProcess
 
 @RestController
 
-class PreguntasController(private val preguntasRepository: PreguntasRepository) {
+class PreguntasController(private val preguntasRepository: PreguntasRepository,private val respuestasRepository: RespuestasRepository) {
     //curl --request POST  --header "Content-type:application/json; charset=utf-8" --data "pepe" localhost:8083/publicarTexto
     @PostMapping("publicarTexto")
     fun insertarmensaje(@RequestBody texto: String): Mensajes {
@@ -25,24 +25,24 @@ class PreguntasController(private val preguntasRepository: PreguntasRepository) 
 
     //curl --request GET --header "Content-type:application/json; charset=utf-8" --data "Mensa" localhost:8083/descargarFiltrado
     @GetMapping("descargarFiltrado")
-    fun filtrado(@RequestBody texto: String): String {
-        var filtrados = MensajesFiltrados()
+    fun filtrado(@RequestBody texto: String): Any {
+        val filtrados = MensajesFiltrados()
         preguntasRepository.findAll().forEach {
             if (it.mensaje.contains(texto)) {
                 filtrados.listaMensajesFiltrados.add(it)
-            }else {
-                return "ERROR NOT FOUND"
             }
-
         }
-        return filtrados.toString()
+        if(filtrados.listaMensajesFiltrados.isEmpty()){
+            return "ERROR NOT FOUND"
+        }
+        return filtrados
     }
 
     @GetMapping("Borrar")
     fun delete() {
         val listaMensajesBorrados = mutableListOf<Mensajes>()
         preguntasRepository.findAll().forEach {
-            if (it.mensaje.equals(" ")) {
+            if (it.mensaje.isEmpty() || it.mensaje.isBlank()) {
                 listaMensajesBorrados.add(it)
             }
         }
@@ -54,11 +54,11 @@ class PreguntasController(private val preguntasRepository: PreguntasRepository) 
         }
     }
     @GetMapping("primeros10Mensajes")
-    fun mostar():Primeros10{
-        val primeros10=Primeros10()
+    fun mostar():MensajesFiltrados{
+        val primeros10=MensajesFiltrados()
         preguntasRepository.findAll().forEach {
             if(it.id<=5){
-                primeros10.primeros10Mensajes.add(it)
+                primeros10.listaMensajesFiltrados.add(it)
         }
 
     }
@@ -66,24 +66,62 @@ class PreguntasController(private val preguntasRepository: PreguntasRepository) 
 }
 
     @GetMapping("ultimos10Mensajes")
-    fun mostar2():Primeros10{
-        var mens=Primeros10()
+    fun mostar2():MensajesFiltrados{
+        var mens=MensajesFiltrados()
         var cont = 0
         preguntasRepository.findAll().asReversed().forEach {
             if (cont < 5){
-                mens.primeros10Mensajes.add(it)
+                mens.listaMensajesFiltrados.add(it)
             }
             cont++
         }
         return mens
     }
+    @GetMapping("idCompendidos/{id1}/{id2}")
+    fun comprendidos(@PathVariable id1:Int,@PathVariable id2:Int):MensajesFiltrados {
+        var mensajesComprendidos=MensajesFiltrados()
+        preguntasRepository.findAll().forEach {
+            if(it.id in id1..id2){
+                mensajesComprendidos.listaMensajesFiltrados.add(it)
+            }
+        }
+        return mensajesComprendidos
+    }
+    @GetMapping("chat/{idx}/{respuesta}")
+    fun chat(@PathVariable idx:Int,@PathVariable respuesta:String){
+
+        respuestasRepository.findAll().forEach {
+            if(it.id==idx){
+                it.respues.add(respuesta)
+            }else{
+                var respuestanueva=Respuestas(idx)
+                respuestanueva.respues.add(respuesta)
+                respuestasRepository.save(respuestanueva)
+            }
+        }
+    }
+    @GetMapping("damerespuestaas/{idx}")
+    fun dame(@PathVariable idx:Int):Any{
+        var flag=false
+        var posiblerespuesta=Respuestas(idx)
+
+        respuestasRepository.findAll().forEach {
+           if(it.id==idx){
+              return it
+           }else{
+           flag=true
+           }
+        }
+        if(flag){
+            return "No existe repuesta con este id"
+        }else return posiblerespuesta
+
+
+    }
 
 }
 
-if (it.id in num1..num2){
-    lista.add(it)
-}
-return lista
+
         //
         // EJERCICIO HECHO CON LOCALHOST
         /* @GetMapping("PublicarTexto/{mensajito}")

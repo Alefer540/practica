@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class Database {
     @Bean
-    fun initDatabase(preguntasRepository: PreguntasRepository,respuestasRepository: RespuestasRepository): CommandLineRunner {
+    fun initDatabase(mensajesRepository: MensajesRepository): CommandLineRunner {//le pasamos la clase MensajesRepository ya que vamos a trabajar con ella
         return CommandLineRunner {
         }
     }

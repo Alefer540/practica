@@ -6,8 +6,8 @@ import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
-@Entity
- data class Mensajes(var mensaje:String,) {
+@Entity//cuando marcamos algo con entity podemos grabar objetos en repositorio
+ data class Mensajes(var mensaje:String,var idRenfereciado:Int? = null) {
   @Id
   @GeneratedValue
   var id=0
@@ -17,17 +17,8 @@ import javax.persistence.Id
   return gson.toJson(this)
  }
 }
-@Entity
-class Respuestas(var idpreg:Int){
- @ElementCollection
- var respues= mutableListOf<String>()
- @Id
- var id=this.idpreg
- override fun toString():String{
-  val gson= Gson()
-  return gson.toJson(this)
- }
-}
+
+
 
 
 
